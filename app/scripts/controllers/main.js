@@ -1,15 +1,15 @@
 'use strict';
 
 angular.module('fivefifteenApp')
-  .controller('MainCtrl', ['$scope', '$routeParams', '$debounce', 'DataFactory', 'StepsFactory', 'modalService',
-                  function( $scope,   $routeParams,   $debounce,   DataFactory,   StepsFactory,   modalService) {
+  .controller('MainCtrl', ['$scope', '$routeParams', '$debounce', '$http', '$filter', 'DataFactory', 'StepsFactory', 'modalService',
+                  function( $scope,   $routeParams,   $debounce,   $http,   $filter,   DataFactory,   StepsFactory,   modalService) {
     // Site Name
-    $scope.siteName = "FiveFifteen";
+    $scope.siteName = 'FiveFifteen report';
 
     // Simple Data service to persist form values.
     $scope.data = DataFactory.data;
     // Admin Contact
-    $scope.admin = "seth@lullabot.com";
+    $scope.admin = 'Seth Brown <seth@lullabot.com>';
     // Define variable for opening email.
     $scope.sendEmail = function() { sendMail($scope); };
     // An array of step objects in order.
@@ -68,6 +68,23 @@ angular.module('fivefifteenApp')
 
     // Watch for any changes to data. We debounce this to only run every second.
     $scope.$watch('data', $debounce(DataFactory.save, 1000), true);
+
+    function sendMail(scope) {
+      var preview = scope.getPreview();
+      var data = {
+        mailTo: scope.admin,
+        mailFrom: 'FiveFifteen friendly robot <five.fifteen@lullabot.com>',
+        body: {
+          html: $filter('markdown')(preview).toString(),
+          text: preview
+        },
+        subject: scope.siteName
+      };
+
+      $http.post('/api/email', data).then(function (response) {
+        console.debug(response);
+      });
+    }
   }])
 
 
@@ -250,10 +267,3 @@ angular.module('fivefifteenApp')
 
     return StepsClass;
   }]);
-
-function sendMail($scope) {
-  var mailTo = $scope.admin;
-  var subject = $scope.siteName;
-
-  window.location.href = 'mailto:' + mailTo + '?subject=Report from ' + subject;
-}
