@@ -1,6 +1,9 @@
 'use strict';
 
 var dependencies = [
+  'ngCookies',
+  'ngResource',
+  'ngSanitize',
   'ngRoute',
   'fivefifteenApp.directives',
   'fivefifteenApp.filters',
@@ -11,8 +14,8 @@ var dependencies = [
   'ui.bootstrap'];
 
 angular.module('fivefifteenApp', dependencies)
-  .config([    '$routeProvider', 'localStorageServiceProvider',
-      function ($routeProvider,   localStorageServiceProvider) {
+  .config([    '$routeProvider', '$locationProvider', 'localStorageServiceProvider',
+      function ($routeProvider,   $locationProvider,   localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('fiveFifteen');
 
     $routeProvider
@@ -35,4 +38,5 @@ angular.module('fivefifteenApp', dependencies)
       .otherwise({
         redirectTo: '/'
       });
+    $locationProvider.html5Mode(true);
   }]);

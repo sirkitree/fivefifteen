@@ -1,6 +1,8 @@
 node_modules
-dist
+public
 .tmp
 .sass-cache
 app/bower_components
-.grunt
+heroku
+/views
+dist
